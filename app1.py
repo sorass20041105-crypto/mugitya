@@ -24,8 +24,6 @@ list = [
 ]
 st.map(list)
 
-
-
 camera_phote = st.camera_input("写真を撮影します")
 
 if camera:
