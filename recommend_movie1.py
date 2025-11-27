@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+
 # ファイルの読み込み
 url = "https://github.com/aimathstats/dataviz1/raw/refs/heads/main/data/movie_rate.xlsx"
 real2 = pd.read_excel(url)
