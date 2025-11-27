@@ -19,8 +19,8 @@ st.write(score)
 st.radio("性別を選択してください",["男性","女性"])
 
 list = [
-    {"latitude",:35.05, "longitude":135.76}
-    {"latitude",:35.04, "longitude":135.75}
+    {"latitude":35.05, "longitude":135.76}
+    {"latitude":35.04, "longitude":135.75}
 ]
 st.map(list)
 
