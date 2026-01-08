@@ -85,11 +85,18 @@ genre_scores = {g: st.sidebar.slider(g, 0, 5, 0) for g in GENRES}
 st.sidebar.subheader("2️⃣ Color Preference (0–5)")
 color_scores = {c: st.sidebar.slider(c, 0, 5, 0) for c in COLORS}
 
-# ⭐ 性別選択（黒文字化のため key を付与）
-gender = st.sidebar.selectbox("3️⃣ Gender", ["Unisex", "Male", "Female"], key="gender-selectbox")
+# ⭐ 性別選択（プルダウン & 黒文字化）
+gender = st.sidebar.selectbox(
+    "3️⃣ Gender",
+    ["Unisex", "Male", "Female"],
+    key="gender-selectbox"
+)
 
-# ⭐ 天気選択を追加
-weather = st.sidebar.selectbox("4️⃣ Weather", ["Sunny", "Cloudy", "Rainy", "Snowy", "Windy"])
+# ⭐ 天気選択（プルダウン）
+weather = st.sidebar.selectbox(
+    "4️⃣ Weather",
+    ["Sunny", "Cloudy", "Rainy", "Snowy", "Windy"]
+)
 
 # -----------------------------
 # Score Completion
