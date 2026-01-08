@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 st.set_page_config(page_title="Outfit Recommendation", layout="wide")
 
 # -----------------------------
-# 未来チック + 白文字 カスタムCSS
+# Custom CSS
 # -----------------------------
 st.markdown("""
 <style>
@@ -16,13 +16,11 @@ body {
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* タイトル */
 h1, h2, h3 {
     color: #7ab8ff !important;
     text-shadow: 0 0 12px #3a7bd5;
 }
 
-/* カードデザイン */
 .card {
     background: rgba(20, 30, 60, 0.6);
     border: 1px solid rgba(80, 150, 255, 0.4);
@@ -33,37 +31,29 @@ h1, h2, h3 {
     margin-bottom: 25px;
 }
 
-/* スライダーのバー */
 .stSlider > div > div > div {
     background: linear-gradient(90deg, #3a7bd5, #00d4ff) !important;
     height: 6px;
     border-radius: 4px;
 }
 
-/* サイドバー背景 */
 [data-testid="stSidebar"] {
     background: rgba(10, 20, 40, 0.8);
     backdrop-filter: blur(6px);
     border-right: 1px solid rgba(80, 150, 255, 0.3);
 }
 
-/* ▼▼ 文字色を白にする設定 ▼▼ */
+/* Sidebar 全体の文字色は白 */
 [data-testid="stSidebar"] * {
     color: #ffffff !important;
 }
 
-.stSlider label {
-    color: #ffffff !important;
+/* ▼ 性別 selectbox だけ黒文字に変更 ▼ */
+#gender-selectbox label,
+#gender-selectbox div[data-baseweb="select"] * {
+    color: #000000 !important;
 }
-
-.stSelectbox label, .stMultiSelect label, .stTextInput label {
-    color: #ffffff !important;
-}
-
-div[data-baseweb="select"] * {
-    color: #ffffff !important;
-}
-/* ▲▲ ここまで追加 ▲▲ */
+/* ▲ ここまで追加 ▲ */
 
 </style>
 """, unsafe_allow_html=True)
@@ -95,8 +85,11 @@ genre_scores = {g: st.sidebar.slider(g, 0, 5, 0) for g in GENRES}
 st.sidebar.subheader("2️⃣ Color Preference (0–5)")
 color_scores = {c: st.sidebar.slider(c, 0, 5, 0) for c in COLORS}
 
-# ⭐⭐⭐ ここで性別選択を追加 ⭐⭐⭐
-gender = st.sidebar.selectbox("3️⃣ Gender", ["Unisex", "Male", "Female"])
+# ⭐ 性別選択（黒文字化のため key を付与）
+gender = st.sidebar.selectbox("3️⃣ Gender", ["Unisex", "Male", "Female"], key="gender-selectbox")
+
+# ⭐ 天気選択を追加
+weather = st.sidebar.selectbox("4️⃣ Weather", ["Sunny", "Cloudy", "Rainy", "Snowy", "Windy"])
 
 # -----------------------------
 # Score Completion
@@ -112,7 +105,7 @@ top_genres = sorted(genre_scores, key=genre_scores.get, reverse=True)[:3]
 top_colors = sorted(color_scores, key=color_scores.get, reverse=True)[:3]
 
 # -----------------------------
-# Outfit Templates (Gender-based)
+# Outfit Templates
 # -----------------------------
 OUTFIT_LIBRARY_UNISEX = {
     "Streetwear": {
@@ -183,7 +176,7 @@ OUTFIT_LIBRARY_FEMALE = {
     }
 }
 
-# 性別に応じてライブラリを切り替え
+# 性別に応じて切り替え
 if gender == "Male":
     OUTFIT_LIBRARY = OUTFIT_LIBRARY_MALE
 elif gender == "Female":
@@ -201,7 +194,8 @@ def generate_outfit(genre, color):
         "Color Theme": color,
         "Inner": f"{color} {random.choice(parts['inner'])}",
         "Outer": f"{color} {random.choice(parts['outer'])}",
-        "Bottom": f"{color} {random.choice(parts['bottom'])}"
+        "Bottom": f"{color} {random.choice(parts['bottom'])}",
+        "Weather": weather
     }
 
 # -----------------------------
@@ -270,6 +264,7 @@ for i, genre in enumerate(top_genres):
         st.subheader(f"Outfit {i+1} Details")
         st.write(f"**Genre:** {outfit['Genre']}")
         st.write(f"**Color Theme:** {outfit['Color Theme']}")
+        st.write(f"**Weather:** {outfit['Weather']}")
         st.write(f"👕 Inner: {outfit['Inner']}")
         st.write(f"🧥 Outer: {outfit['Outer']}")
         st.write(f"👖 Bottom: {outfit['Bottom']}")
