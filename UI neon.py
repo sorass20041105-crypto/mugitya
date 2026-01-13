@@ -198,7 +198,14 @@ class AvatarRenderer:
     @staticmethod
     def render(outfit):
         W, H = 500, 900
-        img = Image.new("RGB", (W, H), (2, 4, 9))
+
+        # ★ ここが変更点：黒服のときだけ背景を白にする
+        if outfit["main_color"] == "Black":
+            bg = (255, 255, 255)
+        else:
+            bg = (2, 4, 9)
+
+        img = Image.new("RGB", (W, H), bg)
         d = ImageDraw.Draw(img)
 
         skin = (235, 215, 200)
