@@ -1,89 +1,133 @@
 import streamlit as st
 import random
-from PIL import Image, ImageDraw
+import os
 
 # ==============================================================================
-# CONFIG
+# PAGE CONFIG
 # ==============================================================================
 st.set_page_config(
-    page_title="AI Stylist | Neon Edition",
+    page_title="AI Stylist | Cyberpunk Edition",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ==============================================================================
-# NEON UI STYLE (CYAN BOOSTED)
+# CYBERPUNK STYLE (CYAN / MAGENTA / NEON GREEN / BLACK)
 # ==============================================================================
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
 
 html, body, [class*="css"] {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Orbitron', sans-serif;
 }
 
-/* ===== Background ===== */
+/* ==============================
+   BASE
+============================== */
 .stApp {
-    background: radial-gradient(circle at top, #0f2027, #02121a 60%, #00060a 90%);
-    color: #EAFBFF;
+    background: radial-gradient(circle at top, #05070A 0%, #02030A 70%);
+    color: #E5E7EB;
 }
 
-/* ===== Sidebar ===== */
+/* ==============================
+   SIDEBAR
+============================== */
 section[data-testid="stSidebar"] {
-    background: rgba(5, 15, 25, 0.95);
-    border-right: 1px solid rgba(0, 255, 255, 0.35);
-    box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
+    background: linear-gradient(180deg, #02030A 0%, #05070A 100%);
+    border-right: 1px solid rgba(0, 246, 255, 0.3);
+    box-shadow: 4px 0 24px rgba(0, 246, 255, 0.2);
 }
 
-/* ===== Headings ===== */
-h1, h2, h3 {
-    color: #DFFFFF;
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] label {
+    color: #00F6FF;
+    text-shadow: 0 0 6px rgba(0, 246, 255, 0.6);
+}
+
+/* ==============================
+   HEADERS
+============================== */
+h1, h2 {
+    color: #00F6FF;
     text-shadow:
-        0 0 12px rgba(0, 255, 255, 0.45),
-        0 0 22px rgba(0, 180, 255, 0.35);
+        0 0 8px rgba(0, 246, 255, 0.7),
+        0 0 16px rgba(0, 246, 255, 0.4);
 }
 
-/* ===== Buttons ===== */
+/* ==============================
+   BUTTON
+============================== */
 div.stButton > button {
-    background: linear-gradient(135deg, #00F5FF, #4F9DFF);
-    color: #020409;
-    border-radius: 10px;
-    padding: 0.7rem 1.2rem;
-    font-weight: 600;
+    background: linear-gradient(90deg, #00F6FF, #FF2A9D);
+    color: #05070A;
     border: none;
-    width: 100%;
+    border-radius: 12px;
+    padding: 0.7rem 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     box-shadow:
-        0 0 18px rgba(0, 245, 255, 0.55),
-        0 0 28px rgba(0, 180, 255, 0.35);
-    transition: all 0.25s ease;
+        0 0 10px rgba(0, 246, 255, 0.6),
+        0 0 22px rgba(255, 42, 157, 0.4);
+    transition: all 0.25s ease-in-out;
+    width: 100%;
 }
 
 div.stButton > button:hover {
-    transform: translateY(-2px) scale(1.03);
+    transform: translateY(-2px) scale(1.02);
     box-shadow:
-        0 0 25px rgba(0, 255, 255, 0.8),
-        0 0 45px rgba(0, 180, 255, 0.7);
+        0 0 14px rgba(57, 255, 20, 0.9),
+        0 0 32px rgba(57, 255, 20, 0.6);
 }
 
-/* ===== Expanders ===== */
-div[data-testid="stExpander"] {
-    background: rgba(0, 10, 15, 0.45);
-    border-radius: 10px;
-    border: 1px solid rgba(0, 255, 255, 0.25);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
+/* ==============================
+   SLIDER
+============================== */
+div[data-baseweb="slider"] > div {
+    background-color: #111827;
 }
 
-/* ===== Labels / Text ===== */
-label, .stSelectbox label, .stMultiSelect label {
-    color: #CFFFFF !important;
-    text-shadow: 0 0 6px rgba(0, 255, 255, 0.3);
+div[data-baseweb="slider"] span {
+    color: #39FF14;
 }
 
-/* ===== Info Box ===== */
-.stAlert {
-    background: rgba(0, 40, 50, 0.35) !important;
-    border-left: 4px solid #00F5FF !important;
-    color: #DFFFFF !important;
+/* ==============================
+   IMAGE CARD
+============================== */
+img {
+    border-radius: 16px;
+    border: 1px solid rgba(0, 246, 255, 0.45);
+    box-shadow:
+        0 0 18px rgba(0, 246, 255, 0.35),
+        0 0 36px rgba(255, 42, 157, 0.2);
+}
+
+/* ==============================
+   EXPANDER
+============================== */
+details {
+    background-color: #02030A;
+    border: 1px solid rgba(255, 42, 157, 0.35);
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 0 14px rgba(255, 42, 157, 0.25);
+}
+
+summary {
+    color: #FF2A9D;
+    font-weight: 600;
+}
+
+/* ==============================
+   INFO BOX
+============================== */
+div[data-testid="stInfo"] {
+    background: rgba(0, 246, 255, 0.08);
+    border: 1px solid #00F6FF;
+    color: #00F6FF;
+    box-shadow: 0 0 12px rgba(0, 246, 255, 0.4);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -92,210 +136,122 @@ label, .stSelectbox label, .stMultiSelect label {
 # DATA
 # ==============================================================================
 class StyleConfig:
-    GENRES = ["Streetwear", "Casual", "Minimal", "Techwear", "Vintage", "Formal"]
-    COLORS = ["Black", "White", "Gray", "Navy", "Brown", "Beige", "Green", "Red"]
-
-    COLOR_MAP = {
-        "Black": (20, 20, 20),
-        "White": (245, 245, 245),
-        "Gray": (120, 120, 125),
-        "Navy": (30, 45, 80),
-        "Brown": (100, 70, 50),
-        "Beige": (220, 210, 190),
-        "Green": (55, 90, 60),
-        "Red": (160, 40, 40)
-    }
-
-    OUTFIT_LIBRARY = {
-        "Streetwear": {
-            "inner": ["Oversized Tee", "Graphic Hoodie"],
-            "outer": ["Bomber Jacket", "Puffer Vest"],
-            "bottom": ["Cargo Pants", "Joggers"],
-            "skirt": ["Pleated Mini", "Sport Skirt"],
-            "shoe": ["Chunky Sneakers", "High Tops"]
-        },
-        "Casual": {
-            "inner": ["Cotton Tee", "Soft Knit"],
-            "outer": ["Denim Jacket", "Cardigan"],
-            "bottom": ["Straight Jeans", "Chinos"],
-            "skirt": ["A-Line Skirt", "Long Denim Skirt"],
-            "shoe": ["Low Sneakers", "Loafers"]
-        },
-        "Minimal": {
-            "inner": ["Mock Neck", "Crisp Shirt"],
-            "outer": ["Trench Coat", "Wool Coat"],
-            "bottom": ["Tapered Slacks", "Wide Trousers"],
-            "skirt": ["Silk Skirt", "Pencil Skirt"],
-            "shoe": ["Leather Boots", "Minimal Sneakers"]
-        },
-        "Techwear": {
-            "inner": ["Compression Top", "Tech Tee"],
-            "outer": ["Hardshell Parka", "Utility Vest"],
-            "bottom": ["Tech Cargo", "Nylon Pants"],
-            "skirt": ["Utility Skirt"],
-            "shoe": ["Tactical Boots", "Running Shoes"]
-        },
-        "Vintage": {
-            "inner": ["Ringer Tee", "Flannel Shirt"],
-            "outer": ["Corduroy Jacket", "Varsity Jacket"],
-            "bottom": ["Washed Jeans", "Corduroy Pants"],
-            "skirt": ["Checkered Skirt", "Midi Skirt"],
-            "shoe": ["Retro Trainers", "Leather Shoes"]
-        },
-        "Formal": {
-            "inner": ["Dress Shirt", "Silk Blouse"],
-            "outer": ["Tailored Blazer", "Long Coat"],
-            "bottom": ["Dress Trousers", "Pressed Slacks"],
-            "skirt": ["Formal Midi"],
-            "shoe": ["Derby Shoes", "Heels"]
-        }
-    }
+    GENRES = ["streetwear", "casual", "minimal", "vintage", "kireime"]
+    COLORS = ["black", "white", "gray", "navy", "brown", "beige", "green", "red"]
 
 # ==============================================================================
-# LOGIC
+# IMAGE RECOMMENDER
 # ==============================================================================
-class OutfitGenerator:
+class ImageRecommender:
     @staticmethod
-    def get_complementary_color(base_color, colors):
-        pairs = {
-            "Black": ["White", "Gray", "Beige", "Red"],
-            "White": ["Black", "Navy", "Gray"],
-            "Navy": ["White", "Beige"],
-            "Brown": ["Beige", "White"],
-            "Beige": ["Black", "Navy"],
-            "Gray": ["Black", "White"],
-            "Green": ["Beige", "Black"],
-            "Red": ["Black", "White"]
-        }
-        return random.choice(pairs.get(base_color, colors))
+    def recommend(gender, style_scores, color_scores, max_images=3, min_weight=12):
+        base_dir = "ai_images"
+        gender_dir = "male" if gender == "male" else "female"
 
-    @staticmethod
-    def create(genre, color, gender, use_outer, colors):
-        lib = StyleConfig.OUTFIT_LIBRARY[genre]
-        accent = OutfitGenerator.get_complementary_color(color, colors)
-        is_skirt = gender == "Female" and random.random() < 0.6
+        candidates = []
 
-        return {
-            "genre": genre,
-            "main_color": color,
-            "accent_color": accent,
-            "items": {
-                "inner": random.choice(lib["inner"]),
-                "outer": random.choice(lib["outer"]) if use_outer else None,
-                "bottom": random.choice(lib["skirt"] if is_skirt else lib["bottom"]),
-                "shoe": random.choice(lib["shoe"])
-            },
-            "meta": {
-                "is_skirt": is_skirt,
-                "has_outer": use_outer
-            }
-        }
+        for style, s_score in style_scores.items():
+            for color, c_score in color_scores.items():
+                total_weight = s_score + c_score
+                if total_weight < min_weight:
+                    continue
 
-# ==============================================================================
-# AVATAR
-# ==============================================================================
-class AvatarRenderer:
-    @staticmethod
-    def render(outfit):
-        W, H = 500, 900
+                path = os.path.join(base_dir, gender_dir, style, color)
+                if os.path.exists(path):
+                    for file in os.listdir(path):
+                        if file.lower().endswith((".png", ".jpg", ".jpeg")):
+                            candidates.append({
+                                "path": os.path.join(path, file),
+                                "style": style,
+                                "color": color,
+                                "weight": total_weight
+                            })
 
-        # ★ ここが変更点：黒服のときだけ背景を白にする
-        if outfit["main_color"] == "Black":
-            bg = (255, 255, 255)
-        else:
-            bg = (2, 4, 9)
+        if not candidates:
+            return []
 
-        img = Image.new("RGB", (W, H), bg)
-        d = ImageDraw.Draw(img)
+        selected = []
+        pool = candidates.copy()
 
-        skin = (235, 215, 200)
-        main = StyleConfig.COLOR_MAP[outfit["main_color"]]
-        accent = StyleConfig.COLOR_MAP[outfit["accent_color"]]
+        while pool and len(selected) < max_images:
+            weights = [c["weight"] for c in pool]
+            choice = random.choices(pool, weights=weights, k=1)[0]
+            selected.append(choice)
+            pool.remove(choice)
 
-        d.ellipse([200, 50, 300, 160], fill=skin)
-        d.rectangle([235, 150, 265, 190], fill=skin)
-
-        d.rectangle([180, 180, 320, 460], fill=accent)
-
-        if outfit["meta"]["is_skirt"]:
-            d.polygon([(180, 460), (320, 460), (360, 650), (140, 650)], fill=main)
-            d.rectangle([210, 650, 240, 820], fill=skin)
-            d.rectangle([260, 650, 290, 820], fill=skin)
-        else:
-            d.rectangle([180, 460, 320, 820], fill=main)
-
-        if outfit["meta"]["has_outer"]:
-            d.rectangle([140, 170, 210, 480], fill=main)
-            d.rectangle([290, 170, 360, 480], fill=main)
-
-        d.rectangle([190, 820, 240, 870], fill=(20, 20, 20))
-        d.rectangle([260, 820, 310, 870], fill=(20, 20, 20))
-
-        return img.resize((250, 450), Image.LANCZOS)
+        return selected
 
 # ==============================================================================
-# UI
+# SIDEBAR
 # ==============================================================================
-def sidebar():
+def sidebar_controls():
     with st.sidebar:
-        st.header("⚙️ Persona")
+        st.header("⚙️ Preferences")
 
-        gender = st.selectbox("Gender", ["Male", "Female"], index=1)
-        use_outer = st.toggle("Include Outerwear", True)
+        gender = st.selectbox("Gender", ["male", "female"])
 
-        genres = st.multiselect(
-            "Styles",
-            StyleConfig.GENRES,
-            default=["Casual", "Minimal"]
-        )
+        st.divider()
+        st.subheader("🎨 Style Ratings (0–10)")
+        style_scores = {
+            style: st.slider(style, 0, 10, 5)
+            for style in StyleConfig.GENRES
+        }
 
-        colors = st.multiselect(
-            "Colors",
-            StyleConfig.COLORS,
-            default=["Black", "Beige", "Navy"]
-        )
+        st.divider()
+        st.subheader("🌈 Color Ratings (0–10)")
+        color_scores = {
+            color: st.slider(color, 0, 10, 5)
+            for color in StyleConfig.COLORS
+        }
 
-        if st.button("✨ Generate"):
-            return gender, use_outer, genres, colors, True
+        st.divider()
+        generate = st.button("✨ Recommend Outfits")
 
-    return None, None, None, None, False
+    return gender, style_scores, color_scores, generate
 
 # ==============================================================================
 # MAIN
 # ==============================================================================
 def main():
-    if "outfits" not in st.session_state:
-        st.session_state.outfits = []
-
     st.title("AI Personal Stylist")
-    st.caption("Neon-powered outfit generation")
+    st.caption("Cyberpunk Edition · Weight ≥ 12 · No duplicate images")
 
-    gender, use_outer, genres, colors, go = sidebar()
+    gender, style_scores, color_scores, generate = sidebar_controls()
 
-    if go:
-        st.session_state.outfits = [
-            OutfitGenerator.create(
-                random.choice(genres),
-                random.choice(colors),
-                gender,
-                use_outer,
-                colors
-            ) for _ in range(3)
-        ]
+    if "images" not in st.session_state:
+        st.session_state["images"] = []
 
-    if st.session_state.outfits:
+    if generate:
+        st.session_state["images"] = ImageRecommender.recommend(
+            gender=gender,
+            style_scores=style_scores,
+            color_scores=color_scores,
+            max_images=3,
+            min_weight=12
+        )
+
+    if st.session_state["images"]:
         cols = st.columns(3)
-        for col, outfit in zip(cols, st.session_state.outfits):
+
+        for col, img in zip(cols, st.session_state["images"]):
             with col:
-                st.image(AvatarRenderer.render(outfit), use_container_width=True)
-                st.subheader(outfit["genre"])
-                st.caption(f'{outfit["main_color"]} × {outfit["accent_color"]}')
-                with st.expander("Details", expanded=True):
-                    for k, v in outfit["items"].items():
-                        st.write(f"**{k.capitalize()}**: {v}")
+                st.image(img["path"], use_container_width=True)
+                st.markdown(f"### {img['style']}")
+                st.caption(f"Color: {img['color']} | Total Weight: {img['weight']}")
 
+                with st.expander("Why this image was recommended", expanded=True):
+                    st.markdown(f"""
+- Style score + Color score = **{img['weight']}**
+- Meets minimum threshold (**≥12**)
+- Higher weight → higher recommendation probability
+- No duplicate images
+""")
     else:
-        st.info("👈 左の設定から Generate を押してください")
+        st.info("👈 Set ratings and click **Recommend Outfits**")
 
+# ==============================================================================
+# RUN
+# ==============================================================================
 if __name__ == "__main__":
     main()
+
